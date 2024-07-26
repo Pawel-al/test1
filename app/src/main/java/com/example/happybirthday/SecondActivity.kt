@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +18,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,10 +35,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.happybirthday.ui.theme.HappyBirthdayTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,6 +63,25 @@ class SecondActivity : ComponentActivity() {
         }
     }
 
+@Composable
+fun GradientButton(onClick: () -> Unit, text: String){
+    Surface(
+        modifier = Modifier
+            .clip(RoundedCornerShape(32.dp))
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(Color.Blue,Color.Green)
+                )
+            )
+            .width(200.dp)
+            .height(60.dp)
+            .border(3.dp, Color.Black, RoundedCornerShape(32.dp)),
+        onClick = onClick
+    ) {
+       // Box)
+
+    }
+}
 @Composable
 fun Buu(){
     val imagesResIds = listOf(
@@ -129,8 +159,8 @@ fun Buu(){
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         images.take(2).forEach{imageItem ->
-                            val size by animateDpAsState(
-                                targetValue = if (selectedItem == imageItem) 120.dp else 100.dp,
+                            val size = animateDpAsState(
+                                targetValue = if (selectedItem.value == imageItem) 120.dp else 100.dp,
                                 animationSpec = tween(durationMillis = 300)
                             )
                         Box(modifier = Modifier
@@ -158,8 +188,8 @@ fun Buu(){
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         images.drop(2).forEach { imageItem ->
-                            val size by animateDpAsState(
-                                targetValue = if (selectedItem == imageItem) 120.dp else 100.dp,
+                            val size = animateDpAsState(
+                                targetValue = if (selectedItem.value == imageItem) 120.dp else 100.dp,
                                 animationSpec = tween(durationMillis = 300)
                             )
                             Box(
@@ -170,7 +200,7 @@ fun Buu(){
                                     .clip(RoundedCornerShape(8.dp))
                                     .clickable {
                                         scope.launch {
-                                            selectedItem = imageItem
+                                            selectedItem.value = imageItem
                                             checkImage(imageItem)
                                         }
                                     }
@@ -185,23 +215,50 @@ fun Buu(){
                     }
                 }
             }
-        Text(text = "Find the \n ${currentWord.value}"
-            , modifier = Modifier.align(Alignment.CenterHorizontally))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .border(1.dp, Color.Black, RoundedCornerShape(32.dp))
+            .clip(RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.Center
+        ){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = buildAnnotatedString {
+                    append("${currentWord.value}")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){}
+                }
+                    , modifier = Modifier.align(Alignment.CenterHorizontally))
 
-        Text(text = "${timeLeft.value}",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.headlineMedium)
+                Text(text = "${timeLeft.value}",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.headlineLarge)
 
-        Text(text = "Points: ${points.value}",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.bodyLarge)
-
-
-        Button(onClick = { startGame() },
+                Text(text = "Points: ${points.value}",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+        Button(
+            onClick = { startGame() },
+            colors = ButtonDefaults.buttonColors(
+                //containerColor = Color.
+            ),
             modifier = Modifier
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
+                .width(200.dp)
+                .height(60.dp)
+                .border(3.dp, Color.Black, RoundedCornerShape(32.dp)),
+
             )
-        { Text(text = "RANDOM")
+        { Text(
+            text = buildAnnotatedString {
+            withStyle(style = SpanStyle(fontSize =25.sp)){
+                append("START")
+            }
+        })
         }
     }
 }
